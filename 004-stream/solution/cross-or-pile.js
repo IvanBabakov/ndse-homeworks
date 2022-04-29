@@ -30,39 +30,19 @@ if(!argv.name) {
     let gameSet = 0;
 
     input.on('line', (data)=> {
-        
-        if (+data === number) {
-            gameSet += 1;
-
-            fs.readFile(file, 'utf-8', (err, data) => {
+        gameSet += 1;
+        fs.readFile(file, 'utf-8', (err, gameResultsJSON) => {
+            if(err) throw new Error(err)
+            let gameResults = JSON.parse(gameResultsJSON);
+            gameResults[gameSet] = +data === number ? "win" : "loose";
+            let message = +data === number ? 'Вы выиграли' : 'Вы проиграли';
+            fs.writeFile(file, JSON.stringify(gameResults), (err)=>{
                 if(err) throw new Error(err)
-                let jsonData = JSON.parse(data);
-                jsonData[gameSet] = "win"
-
-                fs.writeFile(file, JSON.stringify(jsonData), (err)=>{
-                    if(err) throw new Error(err)
-                    console.log('Вы выиграли')
-                })
+                console.log(message)
             })
-            number = getRandomArbitrary();
+        })
+        number = getRandomArbitrary();
             
-        } else {
-            gameSet += 1;
-    
-            fs.readFile(file, 'utf-8', (err, data) => {
-                if(err) throw new Error(err)
-                let jsonData = JSON.parse(data);
-                jsonData[gameSet] = "loose"
-
-                fs.writeFile(file, JSON.stringify(jsonData), (err)=>{
-                    if(err) throw new Error(err)
-                    console.log('Вы проиграли')
-                })
-            })
-            number = getRandomArbitrary();
-            
-        }
-
         if(data === 'стоп') {
             console.log("Конец игры!");
             process.exit(-1)
